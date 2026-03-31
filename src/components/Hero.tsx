@@ -125,68 +125,74 @@ const Hero: React.FC = () => {
         ease: "sine.inOut"
       });
 
-      // --- SCROLLTRIGGER: Astronaut Parallax (PHASE 1) ---
-      // Hero -> About
-      gsap.to(astronautScrollRef.current, {
-        y: "100vh",
-        rotation: -15.75,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: 0.5,
-        }
+      const mm = gsap.matchMedia();
+
+      mm.add({
+        isDesktop: "(min-width: 768px)",
+        isMobile: "(max-width: 767px)"
+      }, (context) => {
+        const { isDesktop } = context.conditions as { isDesktop: boolean };
+
+        // --- SCROLLTRIGGER: Astronaut Parallax (PHASE 1) ---
+        // Hero -> About
+        gsap.to(astronautScrollRef.current, {
+          y: "100vh",
+          rotation: -15.75,
+          scale: isDesktop ? 1 : 0.6, // Shrink on mobile
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.5,
+          }
+        });
+
+        // --- SCROLLTRIGGER: Astronaut Parallax (PHASE 2) ---
+        // About -> NextSection (cross-screen movement & image flip)
+        const phase2Start = "bottom top"; 
+        const phase2End = "+=80%";        
+
+        const phase2Tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: phase2Start, 
+            end: phase2End,
+            scrub: 1,
+          }
+        });
+
+        // 1. X Movement: Pushing him further right on mobile to clear the text column
+        phase2Tl.to(astronautSecondaryScrollRef.current, {
+          x: isDesktop ? "15vw" : "25vw",
+          rotation: 15.75, 
+          duration: 1,
+          ease: "power2.out"
+        }, 0);
+
+        // 2. Y Movement
+        phase2Tl.to(astronautSecondaryScrollRef.current, {
+          y: "100vh", 
+          duration: 1,
+          ease: "power2.in"
+        }, 0);
+
+        // 3. The 3D Flip Swap (ScaleX Illusion)
+        phase2Tl.to(astronautEntranceRef.current, {
+          scaleX: 0,
+          duration: 0.5,
+          ease: "power1.in"
+        }, 0);
+
+        phase2Tl.set(astronautRef.current, { opacity: 0 }, 0.5);
+        phase2Tl.set(astronautFlippedRef.current, { opacity: 1 }, 0.5);
+
+        phase2Tl.to(astronautEntranceRef.current, {
+          scaleX: 1,
+          duration: 0.5,
+          ease: "power1.out"
+        }, 0.5);
       });
-
-      // --- SCROLLTRIGGER: Astronaut Parallax (PHASE 2) ---
-      // About -> NextSection (cross-screen movement & image flip)
-      const phase2Start = "bottom top"; // Fires exactly when Hero clears screen (entering About)
-      const phase2End = "+=80%";        // Ends earlier so it's fully finished before NextSection is blindly locked
-
-      const phase2Tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: phase2Start, 
-          end: phase2End,
-          scrub: 1,
-        }
-      });
-
-      // 1. X Movement: Eases out, so it rushes horizontally to the right edge first
-      phase2Tl.to(astronautSecondaryScrollRef.current, {
-        x: "15vw",  // Considerably reduced from 30vw to keep him entirely inside screen bounds
-        rotation: 15.75, // Explicitly keeping exactly 15.75 as you requested natively!
-        duration: 1,
-        ease: "power2.out"
-      }, 0);
-
-      // 2. Y Movement: Eases in, so it drops aggressively downward ONLY at the end (when on the edge)
-      phase2Tl.to(astronautSecondaryScrollRef.current, {
-        y: "100vh", // Exactly 1 logical viewport height down ensures perfect top matching across sections
-        duration: 1,
-        ease: "power2.in"
-      }, 0);
-
-      // 3. The 3D Flip Swap (ScaleX Illusion)
-      // Flatten the wrapper to 0 width over the first half of the scroll
-      phase2Tl.to(astronautEntranceRef.current, {
-        scaleX: 0,
-        duration: 0.5,
-        ease: "power1.in"
-      }, 0);
-
-      // At exactly 50% scroll (midpoint), the wrapper is paper-thin (invisible).
-      // Instantly swap the opacities! This entirely eliminates 'ghosting'.
-      phase2Tl.set(astronautRef.current, { opacity: 0 }, 0.5);
-      phase2Tl.set(astronautFlippedRef.current, { opacity: 1 }, 0.5);
-
-      // Expand the wrapper back to full width over the second half to reveal the flipped image natively!
-      phase2Tl.to(astronautEntranceRef.current, {
-        scaleX: 1,
-        duration: 0.5,
-        ease: "power1.out"
-      }, 0.5);
 
       // --- 3D MOUSE PARALLAX TRACKING (Awwwards 3D effect) ---
       // Utilizing GSAP quickTo for highly efficient decoupled positional translation
@@ -244,10 +250,10 @@ const Hero: React.FC = () => {
         ref={presentsRef}
         className="absolute top-[18vh] md:top-[20vh] left-1/2 -translate-x-1/2 flex flex-col items-center justify-center z-10 w-full px-4 text-center pointer-events-none"
       >
-        <p className="font-semibold text-sm md:text-base lg:text-lg tracking-[0.2em] md:tracking-[0.3em] text-white uppercase mb-2" style={{ fontFamily: '"SF Pro Rounded", ui-rounded, system-ui, sans-serif' }}>
+        <p className="font-semibold text-xs md:text-base lg:text-lg tracking-[0.2em] md:tracking-[0.3em] text-white uppercase mb-1 md:mb-2" style={{ fontFamily: '"SF Pro Rounded", ui-rounded, system-ui, sans-serif' }}>
           AIS X Astronomy
         </p>
-        <p className="font-light text-xs md:text-sm tracking-[0.4em] md:tracking-[0.6em] text-white/50 uppercase" style={{ fontFamily: '"SF Pro Rounded", ui-rounded, system-ui, sans-serif' }}>
+        <p className="font-light text-[10px] md:text-sm tracking-[0.3em] md:tracking-[0.6em] text-white/50 uppercase" style={{ fontFamily: '"SF Pro Rounded", ui-rounded, system-ui, sans-serif' }}>
           presents
         </p>
       </div>
@@ -294,7 +300,7 @@ const Hero: React.FC = () => {
       {/* Astronaut: Nested wrappers to isolate GSAP timeline conflicts across 3 layout phases */}
       <div
         ref={astronautScrollRef}
-        className="absolute top-[5vh] md:top-[8vh] lg:top-[10vh] left-[-10vw] md:left-[2vw] lg:left-[5vw] xl:left-[8vw] w-[95vw] md:w-[65vw] lg:w-[55vw] xl:w-[48vw] max-w-[1000px] z-30 pointer-events-none filter drop-shadow-[10px_10px_30px_rgba(0,0,0,0.6)]"
+        className="absolute top-[25vh] md:top-[8vh] lg:top-[10vh] left-[-5vw] md:left-[2vw] lg:left-[5vw] xl:left-[8vw] w-[65vw] md:w-[65vw] lg:w-[55vw] xl:w-[48vw] max-w-[1000px] z-30 pointer-events-none filter drop-shadow-[5px_5px_15px_rgba(0,0,0,0.4)] md:drop-shadow-[10px_10px_30px_rgba(0,0,0,0.6)]"
       >
         <div ref={parallaxAstronautRef} className="relative w-full h-full">
           <div ref={astronautSecondaryScrollRef} className="relative w-full h-full">

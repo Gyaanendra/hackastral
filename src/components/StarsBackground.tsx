@@ -72,11 +72,17 @@ const StarsBackground: React.FC = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div ref={containerRef} className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-black">
       {/* Base glow ambients behind the stars */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,80,0,0.1)_0%,transparent_50%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(0,120,255,0.08)_0%,transparent_50%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(255,80,0,0.05)_0%,transparent_50%)]" />
+      
+      {/* Cinematic Nebula Layer 1 */}
+      <div className="absolute top-[-20%] left-[-10%] w-[120%] h-[120%] bg-[radial-gradient(circle_at_50%_50%,rgba(255,100,0,0.03)_0%,transparent_70%)] blur-[100px] animate-pulse duration-[10s]" />
+      
+      {/* Cinematic Nebula Layer 2 */}
+      <div className="absolute top-[20%] right-[-10%] w-[100%] h-[100%] bg-[radial-gradient(circle_at_50%_50%,rgba(0,100,255,0.03)_0%,transparent_70%)] blur-[120px]" />
 
       {/* Layer 1 - Micro Stars */}
       <div 
