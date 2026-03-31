@@ -148,6 +148,64 @@ const Hero: React.FC = () => {
           }
         });
 
+        // --- NEW: Multi-Layered Object Parallax ---
+        // Planen, Satellite, Asteroid, and Text move at different speeds
+        gsap.to(parallaxPlanetRef.current, {
+          y: 150,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1
+          }
+        });
+
+        gsap.to(parallaxSatelliteRef.current, {
+          y: 250,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1
+          }
+        });
+
+        gsap.to(parallaxAsteroidRef.current, {
+          y: 450,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1
+          }
+        });
+
+        gsap.to([textBgRef.current, textFrontRef.current], {
+          y: 200,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1
+          }
+        });
+
+        gsap.to(presentsRef.current, {
+          y: 120,
+          opacity: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: "50% top",
+            scrub: 1
+          }
+        });
+
         // --- SCROLLTRIGGER: Astronaut Parallax (PHASE 2) ---
         // About -> NextSection (cross-screen movement & image flip)
         const phase2Start = "bottom top"; 

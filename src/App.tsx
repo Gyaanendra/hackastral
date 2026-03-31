@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import Hero from './components/Hero'
 import About from './components/About'
 import NextSection from './components/NextSection'
+import Footer from './components/Footer'
 import StarsBackground from './components/StarsBackground'
 import Lenis from '@studio-freight/lenis'
 import gsap from 'gsap'
@@ -40,7 +41,7 @@ function App() {
   }, [])
 
   return (
-    <main className="relative w-full min-h-screen bg-transparent text-white w-screen">
+    <main className="relative w-full min-h-screen bg-black text-white w-screen overflow-x-hidden">
       {/* Global Background Ambience & Moving Stars */}
       <StarsBackground />
 
@@ -48,6 +49,7 @@ function App() {
         <Hero />
         <About />
         <NextSection />
+        <Footer />
       </div>
     </main>
   )
