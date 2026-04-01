@@ -3,7 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowUpCircle } from 'lucide-react';
 
-// --- CUSTOM BRAND SVGS (Replacing removed Lucide icons) ---
+// --- CUSTOM BRAND SVGS ---
 const TwitterIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor">
     <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.292 19.49h2.039L6.486 3.24H4.298l13.311 17.403z" />
@@ -22,7 +22,6 @@ const GithubIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-// Importing footer layer assets
 import layer1 from '../assets/footer/layer1.png';
 import layer2 from '../assets/footer/layer2.png';
 import layer3 from '../assets/footer/layer3.png';
@@ -30,8 +29,10 @@ import layer4 from '../assets/footer/layer4.png';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const FOOTER_MANIFESTO = `THE MISSION IS CLEAR. WE ARE THE HARVESTERS OF FRAGMENTED TIME. EVERY SECOND SPENT BUILDING THE HACKASTRAL IS A SECOND RECLAIMED FROM THE VOID. JOIN US AS WE NAVIGATE THE FINAL FRONTIER OF CODED REALITY.`;
+
 const Footer: React.FC = () => {
-  const footerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
   const layer1Ref = useRef<HTMLDivElement>(null);
   const layer2Ref = useRef<HTMLDivElement>(null);
   const layer3Ref = useRef<HTMLDivElement>(null);
@@ -41,22 +42,18 @@ const Footer: React.FC = () => {
     let handleMouseMove: (e: MouseEvent) => void;
 
     const ctx = gsap.context(() => {
-      // --- MOUSE PARALLAX TRACKING ---
       const xTo1 = gsap.quickTo(layer1Ref.current, "x", { duration: 1.2, ease: "power3" });
       const yTo1 = gsap.quickTo(layer1Ref.current, "y", { duration: 1.2, ease: "power3" });
-
       const xTo2 = gsap.quickTo(layer2Ref.current, "x", { duration: 1.0, ease: "power3" });
       const yTo2 = gsap.quickTo(layer2Ref.current, "y", { duration: 1.0, ease: "power3" });
-
       const xTo3 = gsap.quickTo(layer3Ref.current, "x", { duration: 0.8, ease: "power3" });
       const yTo3 = gsap.quickTo(layer3Ref.current, "y", { duration: 0.8, ease: "power3" });
-
       const xTo4 = gsap.quickTo(layer4Ref.current, "x", { duration: 0.6, ease: "power3" });
       const yTo4 = gsap.quickTo(layer4Ref.current, "y", { duration: 0.6, ease: "power3" });
 
       handleMouseMove = (e: MouseEvent) => {
-        if (!footerRef.current) return;
-        const rect = footerRef.current.getBoundingClientRect();
+        if (!containerRef.current) return;
+        const rect = containerRef.current.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5;
         const y = (e.clientY - rect.top) / rect.height - 0.5;
 
@@ -66,11 +63,9 @@ const Footer: React.FC = () => {
         xTo4(x * 80); yTo4(y * 80);
       };
 
-      footerRef.current?.addEventListener('mousemove', handleMouseMove);
+      containerRef.current?.addEventListener('mousemove', handleMouseMove);
 
-      // --- SCROLL PARALLAX ASSEMBLE ---
       const mm = gsap.matchMedia();
-
       mm.add("(min-width: 768px)", () => {
         gsap.from([layer1Ref.current, layer2Ref.current, layer3Ref.current, layer4Ref.current], {
           y: (i) => (i + 1) * 80,
@@ -78,7 +73,7 @@ const Footer: React.FC = () => {
           stagger: 0.05,
           ease: "power2.out",
           scrollTrigger: {
-            trigger: footerRef.current,
+            trigger: containerRef.current,
             start: "top bottom",
             end: "bottom bottom",
             scrub: true,
@@ -86,26 +81,11 @@ const Footer: React.FC = () => {
         });
       });
 
-      mm.add("(max-width: 767px)", () => {
-        gsap.from([layer1Ref.current, layer2Ref.current, layer3Ref.current, layer4Ref.current], {
-          y: 40,
-          opacity: 0,
-          stagger: 0.03,
-          ease: "power1.out",
-          scrollTrigger: {
-            trigger: footerRef.current,
-            start: "top 95%",
-            end: "top 70%",
-            scrub: true,
-          }
-        });
-      });
-
-    }, footerRef);
+    }, containerRef);
 
     return () => {
       ctx.revert();
-      if (handleMouseMove) footerRef.current?.removeEventListener('mousemove', handleMouseMove);
+      if (handleMouseMove) containerRef.current?.removeEventListener('mousemove', handleMouseMove);
     };
   }, []);
 
@@ -115,52 +95,31 @@ const Footer: React.FC = () => {
 
   return (
     <footer
-      ref={footerRef}
-      className="relative w-full h-[650px] md:h-[750px] bg-transparent overflow-hidden select-none"
+      ref={containerRef}
+      className="relative w-full h-[700px] md:h-[800px] bg-transparent overflow-hidden select-none"
     >
-      {/* Parallax Layers with Alpha Masking for Seamless Blending */}
-      <div className="absolute inset-0 z-0 pointer-events-none" style={{ maskImage: 'linear-gradient(to bottom, transparent, black 15%, black)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black)' }}>
+      <div className="absolute inset-0 z-0 pointer-events-none" style={{ maskImage: 'linear-gradient(to bottom, transparent, black 15%, black)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 25%, black)' }}>
         <div ref={layer1Ref} className="absolute inset-0 opacity-40">
-          <img src={layer1} alt="B1" className="w-full h-full object-cover scale-110" />
+          <img src={layer1} alt="B1" className="w-full h-full object-cover" />
         </div>
         <div ref={layer2Ref} className="absolute inset-0 opacity-60">
-          <img src={layer2} alt="B2" className="w-full h-full object-cover scale-110" />
+          <img src={layer2} alt="B2" className="w-full h-full object-cover" />
         </div>
         <div ref={layer3Ref} className="absolute inset-0 opacity-80">
-          <img src={layer3} alt="B3" className="w-full h-full object-cover scale-110" />
+          <img src={layer3} alt="B3" className="w-full h-full object-cover" />
         </div>
         <div ref={layer4Ref} className="absolute inset-0 opacity-100">
-          <img src={layer4} alt="B4" className="w-full h-full object-cover scale-110" />
+          <img src={layer4} alt="B4" className="w-full h-full object-cover" />
         </div>
       </div>
 
-      {/* Atmospheric Star Overlay: Positioned ABOVE layers 1-4, BELOW content */}
-      <div className="absolute inset-0 z-5 pointer-events-none opacity-40">
-        {[...Array(30)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-[1px] h-[1px] bg-white rounded-full animate-pulse shadow-[0_0_8px_rgba(255,255,255,0.8)]"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 5}s`,
-              animationDuration: `${2 + Math.random() * 4}s`
-            }}
-          />
-        ))}
-      </div>
+      {/* Dark gradient veil — top to bottom for depth */}
+      <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-b from-black via-black/70 to-black/50 opacity-75" />
+      {/* Readability overlay — darkens background layers */}
+      <div className="absolute inset-0 z-[11] pointer-events-none backdrop-blur-[3px] bg-black/50" />
 
-      {/* Readability & Control Layers (BLENDING FIX) */}
-      <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-black via-black/40 to-transparent opacity-95" />
-      <div className="absolute inset-x-0 top-0 h-96 z-10 pointer-events-none bg-gradient-to-b from-black to-transparent opacity-25" />
-      <div className="absolute inset-0 z-[11] pointer-events-none backdrop-blur-[1.5px] bg-black/20" />
-
-      {/* Content Overlay */}
-      <div className="relative z-20 w-full h-full flex flex-col items-center justify-between py-16 md:py-20 px-6 md:px-20">
-
-        {/* Top: Branding and Social Links */}
+      <div className="relative z-[25] w-full h-full flex flex-col items-center justify-between py-16 md:py-20 px-6 md:px-20">
         <div className="w-full max-w-7xl flex flex-col md:flex-row items-center md:items-start justify-between gap-12 md:gap-0">
-
           <div className="flex flex-col items-center md:items-start group">
             <div className="h-1 w-12 md:w-16 bg-red-600 mb-6 md:mb-8 group-hover:w-24 md:group-hover:w-32 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(220,38,38,0.5)]" />
             <h2 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none select-none text-white transition-all duration-500 hover:text-red-600 hover:scale-[1.02]"
@@ -172,28 +131,27 @@ const Footer: React.FC = () => {
               <div className="hidden md:block h-[1px] w-12 bg-white/20" />
               <p className="text-gray-500 text-[10px] md:text-xs uppercase tracking-widest font-black">Celestial Bound</p>
             </div>
-            <p className="text-gray-400 text-sm md:text-lg max-w-md font-light leading-relaxed mt-6 md:mt-8 text-center md:text-left opacity-60 px-4 md:px-0">
-              Forging the future of digital exploration through astronomical code and decentralized curiosity.
+
+            {/* Normal Manifesto Text */}
+            <p className="mt-12 text-gray-400 text-sm md:text-base font-mono max-w-md leading-relaxed opacity-60">
+              {FOOTER_MANIFESTO}
             </p>
           </div>
 
-          <div className="flex items-center gap-4 md:gap-8 mt-8 md:translate-y-4">
-            {[
-              { icon: TwitterIcon, href: "#" },
-              { icon: DiscordIcon, href: "#" },
-              { icon: GithubIcon, href: "#" }
-            ].map((social, idx) => (
-              <a key={idx} href={social.href} className="p-4 md:p-6 bg-white/[0.03] hover:bg-red-600/10 rounded-full border border-white/5 hover:border-red-600/40 backdrop-blur-3xl transition-all duration-500 group shadow-[0_20px_50px_rgba(0,0,0,0.5)] active:scale-95">
-                <social.icon className="w-5 h-5 md:w-7 md:h-7 text-gray-500 group-hover:text-red-500 transition-colors" />
-              </a>
-            ))}
+          <div className="flex items-center gap-4 md:gap-8 mt-8 md:translate-y-4 pointer-events-auto">
+            <a href="#" className="p-4 md:p-6 bg-white/[0.03] hover:bg-red-600/10 rounded-full border border-white/5 hover:border-red-600/40 backdrop-blur-3xl transition-all duration-500 group shadow-[0_20px_50px_rgba(0,0,0,0.5)] active:scale-95">
+              <TwitterIcon className="w-5 h-5 md:w-7 md:h-7 text-gray-500 group-hover:text-red-500 transition-colors" />
+            </a>
+            <a href="#" className="p-4 md:p-6 bg-white/[0.03] hover:bg-red-600/10 rounded-full border border-white/5 hover:border-red-600/40 backdrop-blur-3xl transition-all duration-500 group shadow-[0_20px_50px_rgba(0,0,0,0.5)] active:scale-95">
+              <DiscordIcon className="w-5 h-5 md:w-7 md:h-7 text-gray-500 group-hover:text-red-500 transition-colors" />
+            </a>
+            <a href="#" className="p-4 md:p-6 bg-white/[0.03] hover:bg-red-600/10 rounded-full border border-white/5 hover:border-red-600/40 backdrop-blur-3xl transition-all duration-500 group shadow-[0_20px_50px_rgba(0,0,0,0.5)] active:scale-95">
+              <GithubIcon className="w-5 h-5 md:w-7 md:h-7 text-gray-500 group-hover:text-red-500 transition-colors" />
+            </a>
           </div>
         </div>
 
-        {/* Bottom Section: Personal Branding & Legal */}
-        <div className="w-full max-w-7xl flex flex-col md:flex-row items-center justify-between gap-12 md:gap-16 border-t border-white/5 pt-12 md:pt-16 mt-auto">
-
-          {/* PERSONAL DEVELOPER CREDIT: REFINED REVEAL */}
+        <div className="w-full max-w-7xl flex flex-col md:flex-row items-center justify-between gap-12 md:gap-16 border-t border-white/5 pt-12 md:pt-16 mt-auto pointer-events-auto">
           <div
             onClick={() => window.open('https://gyanendra.vihar.in', '_blank')}
             className="flex flex-col items-center md:items-start gap-2 cursor-pointer group relative min-w-[200px] md:min-w-[250px]"
@@ -223,11 +181,7 @@ const Footer: React.FC = () => {
             <p className="text-gray-500 text-[10px] md:text-[11px] tracking-[0.3em] uppercase font-black">
               © 2026 AIS X ASTRONOMY
             </p>
-            <p className="text-gray-600 text-[9px] md:text-[10px] tracking-[0.4em] uppercase opacity-40">
-              Celestial Frontiers. All Rights Reserved.
-            </p>
           </div>
-
         </div>
       </div>
     </footer>

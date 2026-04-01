@@ -3,32 +3,24 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { prepare } from '@chenglou/pretext';
 
-// Asset Import: Only the primary interactive satellite for this section
-import sat1 from '../assets/rockets_satalites/Damaged NASA satellite tumbling through space.png';
+import dish1 from '../assets/rockets_satalites/Damaged satellite drifting in space.png';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const ABOUT_TEXT = `ABOUT HACKASTRAL: A FRAGMENTED JOURNEY THROUGH THE VOID.
-THE CORE HAS BEEN SHATTERED, BUT THE MISSION CONTINUES. WE ARE A COLLECTIVE OF CREATIVES, CODERS, AND DREAMERS BUILDING THE HACKASTRAL. 
+const TRACKS_TEXT = `THE TRACKS: ARCHIVE OF THE HACKASTRAL. THIS IS WHERE THE FREQUENCIES OF THE VOID ARE DECODED INTO USABLE DATA. 01. SIGNAL — ARTIFICIAL INTELLIGENCE & MACHINE LEARNING. DECODE THE NOISE. BUILD INTELLIGENCE THAT NAVIGATES THE VOID THROUGH LLMS, COMPUTER VISION, AND AUTONOMOUS SYSTEMS. 02. ORBIT — WEB3 & DECENTRALIZED PROTOCOLS. CHART NEW COORDINATES. DEVELOP SMART CONTRACTS AND DAOS THAT REWRITE THE FABRIC OF REALITY. 03. NEBULA — SPACE TECH & HARDWARE. ENGINEER THE TANGIBLE COSMOS. BRIDGING THE PHYSICAL AND DIGITAL VOID THROUGH IOT AND EMBEDDED SYSTEMS. THE REMNANTS OF THE OLD WORLD DRIFT PAST, BUT THE DATA IS ETERNAL.`;
 
-DIVE INTO THE STREAMS OF DATA WHERE THE FRAGMENTS ARE AS REAL AS THE CODE. THE SECTOR 7G ANOMALY WAS NOT THE END, BUT THE BEGINNING OF A NEW ARCHITECTURE. A NEW FRONTIER WHERE LOGIC AND IMAGINATION COEXIST IN THE SILENCE OF THE STARS.
-
-OBSERVE HOW THE INFORMATION ADAPTS TO THE PHYSICAL PRESENCE OF THE CORE RELICS. THE RADIANCE OF A THOUSAND SUNS WAS BUT A SPARK COMPARED TO THE TERMINAL BURST THAT GAVE BIRTH TO THIS NEBULA OF KNOWLEDGE. WE ARE THE HARVESTERS OF THE LIGHT, THE ARCHITECTS OF THE VOID, AND THE GUARDIANS OF THE ETERNAL FREQUENCY.
-
-THE VACUUM REMEMBERS. EVERY LINE OF CODE IS A STAR; EVERY COMPONENT IS A CONSTELLATION. TRANSFORM THE VOID INTO A CANVAS OF INFINITE POSSIBILITY. THE JOURNEY IS NOT JUST THROUGH SPACE, BUT THROUGH THE VERY FABRIC OF INTELLIGENT REALITY. BELIEVE IN THE ARCHIVE. PROTECT THE FREQUENCY.`;
-
-const About: React.FC = () => {
+const Tracks: React.FC = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const titleRef = useRef<HTMLHeadingElement>(null);
     const titleWrapRef = useRef<HTMLDivElement>(null);
-    const artifactRef = useRef<HTMLDivElement>(null);
 
-    const MISSION_LOG_WORDS = useMemo(() => ABOUT_TEXT.split(' '), []);
+    const artifact2Ref = useRef<HTMLDivElement>(null);
+
+    const WORDS = useMemo(() => TRACKS_TEXT.split(' '), []);
     const rafRef = useRef<number>(0);
 
     useEffect(() => {
-        // 1. Reveal Animations (DOM)
         const ctx = gsap.context(() => {
             gsap.from(titleRef.current, {
                 scrollTrigger: {
@@ -36,21 +28,20 @@ const About: React.FC = () => {
                     start: "top 60%",
                     toggleActions: "play none none reverse"
                 },
-                x: 100,
+                x: -100,
                 opacity: 0,
                 duration: 1,
                 ease: "power3.out"
             });
         }, containerRef);
 
-        // 2. Canvas Text Engine
         const canvas = canvasRef.current;
         if (!canvas) return;
         const canvasCtx = canvas.getContext('2d');
         if (!canvasCtx) return;
 
         const font = '22px "Space Mono", monospace';
-        prepare(ABOUT_TEXT, font);
+        prepare(TRACKS_TEXT, font);
 
         const render = () => {
             if (!canvas || !canvasCtx || !containerRef.current) return;
@@ -70,28 +61,28 @@ const About: React.FC = () => {
             const containerWidth = Math.min(canvas.width, 1400);
             const containerOffset = (canvas.width - containerWidth) / 2;
 
-            // Layout Calculation: text on the RIGHT half, below the heading
-            const textMaxWidth = isMobile ? (containerWidth - padding * 2) : (containerWidth * 0.45);
-            const startX = isMobile ? (containerOffset + padding) : (containerOffset + containerWidth * 0.5 + padding);
+            // Layout: Text block on left, slightly wider to allow words to flow gracefully around the dish
+            const textMaxWidth = isMobile ? (containerWidth - padding * 2) : (containerWidth * 0.55);
+            const startX = isMobile ? (containerOffset + padding) : (containerOffset + padding);
 
-            // Dynamically push text below the heading
-            let startY = isMobile ? 480 : 420;
+            // Dynamically calculate start Y based on title element height if available
+            let startY = isMobile ? 440 : 480;
             if (titleWrapRef.current && containerRef.current) {
                 const titleRect = titleWrapRef.current.getBoundingClientRect();
                 const containerRect2 = containerRef.current.getBoundingClientRect();
                 const titleBottom = titleRect.bottom - containerRect2.top;
                 if (titleBottom > 0) {
-                    startY = titleBottom + 32;
+                    startY = titleBottom + 40;
                 }
             }
             const lineHeight = 38;
 
-            // GET ACTUAL ARTIFACT POSITION FROM DOM — title is NOT an obstacle (text starts below it)
+            // GET ACTUAL ARTIFACT POSITIONS FROM DOM — title is NOT an obstacle (text starts below it)
             const obstacles: { x: number, y: number, w: number, h: number }[] = [];
             const containerRect = containerRef.current.getBoundingClientRect();
 
-            if (artifactRef.current) {
-                const rect = artifactRef.current.getBoundingClientRect();
+            if (artifact2Ref.current) {
+                const rect = artifact2Ref.current.getBoundingClientRect();
                 obstacles.push({
                     x: rect.left - containerRect.left,
                     y: rect.top - containerRect.top,
@@ -103,7 +94,8 @@ const About: React.FC = () => {
             let currentX = startX;
             let currentY = startY;
 
-            MISSION_LOG_WORDS.forEach((word) => {
+            WORDS.forEach((word) => {
+
                 const metrics = canvasCtx.measureText(word + ' ');
                 const wordWidth = metrics.width;
 
@@ -115,8 +107,8 @@ const About: React.FC = () => {
                     }
 
                     let collision = false;
-                    const buffer = 25; // High-fidelity cinematic buffer
-                    
+                    const buffer = 30; // Closer high-fidelity cinematic buffer
+
                     for (const obs of obstacles) {
                         if (
                             currentY + lineHeight > obs.y - buffer &&
@@ -128,7 +120,7 @@ const About: React.FC = () => {
                             break;
                         }
                     }
-                    
+
                     if (!collision) {
                         canvasCtx.fillText(word + ' ', currentX, currentY);
                         currentX += wordWidth;
@@ -148,13 +140,13 @@ const About: React.FC = () => {
             ctx.revert();
             cancelAnimationFrame(rafRef.current);
         };
-    }, [MISSION_LOG_WORDS]);
+    }, [WORDS]);
 
     return (
         <section
-            id="about-section"
+            id="next-section"
             ref={containerRef}
-            className="relative w-full min-h-[130vh] bg-transparent overflow-visible"
+            className="relative w-full min-h-[180vh] bg-transparent flex items-start overflow-visible pt-20"
         >
             <canvas
                 ref={canvasRef}
@@ -162,32 +154,28 @@ const About: React.FC = () => {
                 style={{ width: '100%', height: '100%' }}
             />
 
-            <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 h-full pt-8 pb-32 pointer-events-none">
-                <div ref={titleWrapRef} className="md:col-start-8 md:col-span-5 flex flex-col justify-start pointer-events-auto mt-[160px] md:mt-[200px]">
-                    <h2
-                        ref={titleRef}
-                        className="text-6xl md:text-8xl lg:text-9xl font-black mb-2 bg-gradient-to-br from-white via-white to-orange-500 bg-clip-text text-transparent inline-block text-right w-full"
-                        style={{ fontFamily: '"SF Pro Rounded", ui-rounded, system-ui, sans-serif' }}
-                    >
-                        ABOUT
-                    </h2>
-                </div>
+            {/* Dish — Rotated and Enlarged for dynamic presence */}
+            <div
+                ref={artifact2Ref}
+                className="absolute left-[8%] top-[420px] w-96 h-80 opacity-100 pointer-events-none z-0 rotate-[-12deg]"
+            >
+                <img src={dish1} alt="Debris" className="w-full h-full object-contain" />
             </div>
 
-            {/* Static Space Artifact (No longer draggable) */}
-            <div
-                ref={artifactRef}
-                className="artifact absolute right-[6%] top-[580px] w-64 h-52 pointer-events-none"
-                style={{ zIndex: 5 }}
-            >
-                <img
-                    src={sat1}
-                    alt="Space Artifact"
-                    className="w-full h-full object-contain"
-                />
+            {/* Heading — left column */}
+            <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 h-full pt-24 pointer-events-none">
+                <div ref={titleWrapRef} className="md:col-start-1 lg:col-span-6 flex flex-col justify-start pointer-events-auto">
+                    <h2
+                        ref={titleRef}
+                        className="text-6xl md:text-8xl lg:text-9xl font-black mb-8 tracking-wider bg-gradient-to-br from-white via-white to-orange-500 bg-clip-text text-transparent inline-block text-left w-full"
+                        style={{ fontFamily: '"SF Pro Rounded", ui-rounded, system-ui, sans-serif' }}
+                    >
+                        THE<br />TRACKS
+                    </h2>
+                </div>
             </div>
         </section>
     );
 };
 
-export default About;
+export default Tracks;

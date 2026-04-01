@@ -1,9 +1,13 @@
 import { useEffect } from 'react'
 import Hero from './components/Hero'
 import About from './components/About'
-import NextSection from './components/NextSection'
-import Footer from './components/Footer'
+import Tracks from './components/Tracks'
+import MissionLog from './components/MissionLog';
+import Team from './components/Team';
+import Footer from './components/Footer';
+import SpaceDebrisSpacer from './components/SpaceDebrisSpacer'
 import StarsBackground from './components/StarsBackground'
+import ScrollAstronaut from './components/ScrollAstronaut'
 import Lenis from '@studio-freight/lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -41,18 +45,24 @@ function App() {
   }, [])
 
   return (
-    <main className="relative w-full min-h-screen bg-black text-white w-screen overflow-x-hidden">
+    <main className="relative w-full min-h-screen bg-black text-white">
       {/* Global Background Ambience & Moving Stars */}
       <StarsBackground />
 
-      <div className="relative z-10 flex flex-col w-full h-full">
+      {/* Fixed-position astronaut hoisted to DOM ROOT for absolute visibility */}
+      <ScrollAstronaut />
+
+      <div className="flex flex-col w-full">
         <Hero />
+        <SpaceDebrisSpacer />
         <About />
-        <NextSection />
+        <Tracks />
+        <MissionLog />
+        <Team />
         <Footer />
       </div>
     </main>
-  )
+  );
 }
 
 export default App
